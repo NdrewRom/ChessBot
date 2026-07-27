@@ -1,0 +1,16 @@
+# Виртуальное окружение
+.venv/
+venv/
+
+# Логи и временные файлы
+*.log
+
+# Папка настроек PyCharm
+.idea/
+
+# Кэш Python
+__pycache__/
+*.pyc
+
+# Исполняемый файл Stockfish
+stockfish/*.exe
