@@ -1,12 +1,19 @@
 import time
 from GameSetup import GameSetup
+from repository import GameRepository
 import chess
 from ChessEngine import ChessEngine
 from ChessboardController import ChessboardController
 from Browser import Browser
+from database import init_db, SessionLocal
+
+init_db()
 
 
 def main():
+    session = SessionLocal()
+    repo = GameRepository(session)
+
     with Browser() as browser:
         browser.open("https://www.chess.com/play/online")
 
@@ -16,19 +23,26 @@ def main():
         setup.enable_show_legal_moves()
         controller = ChessboardController(browser.driver)
         setup.start_game()
+        time.sleep(1)
 
 
         with ChessEngine("stockfish/stockfish-windows-x86-64-avx2.exe") as chess_engine:
             while True:
                 my_color = controller.get_my_color()
                 print(f"Ваш цвет: {'БЕЛЫЕ' if my_color == chess.WHITE else 'ЧЕРНЫЕ'}")
-                board = chess.Board()
 
+                game_record = repo.create_game(my_color = 'БЕЛЫЕ' if my_color == chess.WHITE else 'ЧЕРНЫЕ')
+                print(f"Партия сохранена в БД с ID: {game_record.id}")
+
+                board = chess.Board()
                 print("Бот запущен. Начинаем отслеживание игры...")
 
                 while True:
                     if controller.is_game_over():
                         print("Игра окончена!")
+                        repo.finish_game(
+                            game_id=game_record.id, result="finished"
+                        )
                         break
 
                     if board.turn == my_color:
@@ -36,6 +50,14 @@ def main():
 
                         move = chess_engine.get_best_move(board)
                         print(f"Делаю легальный ход: {move}")
+
+                        move_number = board.fullmove_number
+                        repo.add_move(
+                            game_id=game_record.id,
+                            move_number=move_number,
+                            move_uci=move.uci(),
+                        )
+
                         controller.make_move(move)
                         board.push(move)
                         time.sleep(0.6)
@@ -70,6 +92,14 @@ def main():
 
                         if detected_move:
                             print(f"\n--- Обнаружен ход оппонента: {detected_move} ---")
+
+                            move_number = board.fullmove_number
+                            repo.add_move(
+                                game_id=game_record.id,
+                                move_number=move_number,
+                                move_uci=detected_move.uci(),
+                            )
+
                             board.push(detected_move)
                             print(board)
                             time.sleep(0.2)
