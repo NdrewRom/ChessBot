@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy import ForeignKey
 from datetime import datetime
@@ -19,9 +19,10 @@ class GameRecord(Base):
 
 class MoveRecord(Base):
     __tablename__ = "moves"
-    game = relationship("GameRecord", back_populates="moves")
-    id = Column(Integer, primary_key=True)
-    game_id = Column(Integer, ForeignKey("games.id"))
-    move_number = Column(Integer)
-    move_uci = Column(String)
 
+    id = Column(Integer, primary_key=True, index=True)
+    game_id = Column(Integer, ForeignKey("games.id"), nullable=False)
+    move_number = Column(Integer, nullable=False)
+    is_my_move = Column(Boolean, nullable=False)
+    uci_move = Column(String(5), nullable=False)
+    game = relationship("GameRecord", back_populates="moves")

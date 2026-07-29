@@ -90,3 +90,30 @@ class ChessboardController:
         classes = board_element.get_attribute("class")
         return chess.BLACK if "flipped" in classes else chess.WHITE
 
+    def wait_and_detect_enemy_move(self, board: chess.Board) -> chess.Move | None:
+        try:
+            current_pieces = self.get_pieces()
+        except RuntimeError:
+            return None
+
+        for move in board.legal_moves:
+            board.push(move)
+            match = True
+
+            for square_index in chess.SQUARES:
+                square_name = chess.square_name(square_index)
+                piece_on_board = board.piece_at(square_index)
+                piece_on_site = current_pieces.get(square_name)
+                symbol_on_board = piece_on_board.symbol() if piece_on_board else None
+
+                if symbol_on_board != piece_on_site:
+                    match = False
+                    break
+
+            board.pop()
+
+            if match:
+                return move
+
+        return None
+
