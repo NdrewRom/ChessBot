@@ -117,3 +117,16 @@ class ChessboardController:
 
         return None
 
+    def get_game_result_reason(self) -> str:
+        try:
+            title_element = WebDriverWait(self._driver, 3).until(
+                EC.presence_of_element_located((
+                    By.CSS_SELECTOR,
+                    ".game-over-modal-title-component, .game-over-header-title"
+                ))
+            )
+            return title_element.text.strip()
+
+        except Exception:
+            return "Игра завершена"
+

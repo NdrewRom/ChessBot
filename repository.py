@@ -24,5 +24,5 @@ class GameRepository:
     def finish_game(self, game_id: int, result: str = "finished"):
         game = self.session.query(GameRecord).filter_by(id=game_id).first()
         if game:
-            game.status = result
+            game.result = result
             self.session.commit()
