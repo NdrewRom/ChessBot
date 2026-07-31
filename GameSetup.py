@@ -23,26 +23,32 @@ class GameSetup:
             raise RuntimeError("Не удалось начать игру как гость")
 
     def enable_show_legal_moves(self) -> None:
-        time.sleep(1)
+
         self._driver.get("https://www.chess.com/settings/gameplay")
 
-        label = WebDriverWait(self._driver, 5).until(
-            EC.presence_of_element_located((
+        always_queen_label = WebDriverWait(self._driver, 10).until(
+            EC.element_to_be_clickable((
                 By.XPATH,
-                "//h4[.//span[text()='Всегда превращать в ферзя']]/parent::div//label"
+                "//h4[.//span[text()='Всегда превращать в ферзя']]/parent::div//label",
             ))
         )
-        label.click()
+        always_queen_label.click()
 
-        label = WebDriverWait(self._driver, 5).until(
-            EC.presence_of_element_located((
+        show_moves_label = WebDriverWait(self._driver, 10).until(
+            EC.element_to_be_clickable((
                 By.XPATH,
-                "//h4[.//span[text()='Показывать допустимые ходы']]/parent::div//label"
+                "//h4[.//span[text()='Показывать допустимые ходы']]/parent::div//label",
             ))
         )
+        show_moves_label.click()
 
-        label.click()
-        time.sleep(5)
+        WebDriverWait(self._driver, 5).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "save-success-status-icon"))
+        )
+        WebDriverWait(self._driver, 5).until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "save-success-status-icon"))
+        )
+
         self._driver.get("https://www.chess.com/play/online")
 
 
@@ -89,13 +95,11 @@ class GameSetup:
         self._driver.execute_script("arguments[0].click();", button)
 
     def wait_for_new_game(self) -> None:
-        # ждём пока исчезнет модальное окно конца партии
         WebDriverWait(self._driver, 30).until_not(
             EC.presence_of_element_located((
                 By.CSS_SELECTOR, "[class*='game-over-modal']"
             ))
         )
-        # ждём появления соперника
         WebDriverWait(self._driver, 60).until_not(
             EC.text_to_be_present_in_element(
                 (By.CSS_SELECTOR, "[data-test-element='user-tagline-username']"),

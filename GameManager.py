@@ -49,10 +49,8 @@ class GameManager:
 
         self.controller.make_move(move)
         board.push(move)
-        time.sleep(0.6)
 
     def _handle_enemy_turn(self, board: chess.Board, game_id: int):
-        time.sleep(0.15)
         enemy_move = self.controller.wait_and_detect_enemy_move(board)
 
         if enemy_move:
@@ -65,4 +63,3 @@ class GameManager:
 
             board.push(enemy_move)
             print(board)
-            time.sleep(0.2)

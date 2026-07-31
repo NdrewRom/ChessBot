@@ -41,38 +41,29 @@ class Browser:
         self.open("https://www.chess.com/login")
 
         try:
-            # 1. Ждем появления поля логина
             username_field = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.ID, "login-username"))
             )
 
-            # 2. Находим поле пароля
             password_field = self.driver.find_element(By.CSS_SELECTOR, "input[type='password']")
 
-            # 3. Находим кнопку входа
             login_button = self.driver.find_element(By.ID, "login")
 
-            # Вводим данные через JavaScript (это обходит ошибку 'invalid element state')
             self.driver.execute_script("arguments[0].value = arguments[1];", username_field, username_or_email)
             self.driver.execute_script("arguments[0].value = arguments[1];", password_field, password)
 
-            # Триггерим событие изменения, чтобы Vue.js на сайте понял, что текст введён
             self.driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));",
                                        username_field)
             self.driver.execute_script("arguments[0].dispatchEvent(new Event('input', { bubbles: true }));",
                                        password_field)
-
-            # Кликаем "Войти"
             login_button.click()
 
-            # Ждем, пока загрузится интерфейс авторизованного пользователя
             WebDriverWait(self.driver, 15).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "nav-link-profile"))
             )
-            print("[+] Автоматический вход выполнен успешно!")
+            print("Автоматический вход выполнен успешно!")
 
         except Exception as e:
-            print(f"[-] Ошибка авто-логина: {e}")
-            print("[!] Скорее всего, chess.com выкатил капчу или изменил ID кнопки пароля.")
+            print(f"Ошибка авто-логина: {e}")
+            print("Скорее всего, chess.com выкатил капчу или изменил ID кнопки пароля.")
             input("Решите капчу в браузере вручную и нажмите Enter для продолжения...")
-
