@@ -36,7 +36,7 @@ def main():
                 while True:
                     game_manager.play_game()
 
-                    print("\nИщем новую партию...")
+                    print("\nLooking for a new game")
                     setup.start_new_game()
                     setup.wait_for_new_game()
 

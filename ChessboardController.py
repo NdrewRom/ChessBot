@@ -45,7 +45,7 @@ class ChessboardController:
                     pieces_dict[place] = piece
 
                 if not pieces_dict:
-                    raise RuntimeError("Не удалось найти фигуры на доске")
+                    raise RuntimeError("Unable to find pieces on the board")
 
                 return pieces_dict
             except StaleElementReferenceException:
@@ -128,5 +128,5 @@ class ChessboardController:
             return title_element.text.strip()
 
         except Exception:
-            return "Игра завершена"
+            return "Game finished"
 

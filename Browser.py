@@ -64,6 +64,6 @@ class Browser:
             print("Автоматический вход выполнен успешно!")
 
         except Exception as e:
-            print(f"Ошибка авто-логина: {e}")
-            print("Скорее всего, chess.com выкатил капчу или изменил ID кнопки пароля.")
-            input("Решите капчу в браузере вручную и нажмите Enter для продолжения...")
+            print(f"Auto-login error: {e}")
+            print("Most likely, chess.com rolled out a captcha or changed the password button ID.")
+            input("Solve the captcha in your browser manually and press Enter to continue")

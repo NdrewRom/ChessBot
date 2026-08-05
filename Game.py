@@ -26,7 +26,7 @@ class Game:
             self._board.push(move)
 
         except (chess.InvalidMoveError, ValueError):
-            raise ValueError("Некорректный ход")
+            raise ValueError("Incorrect move")
 
     @property
     def outcome(self) -> chess.Outcome:

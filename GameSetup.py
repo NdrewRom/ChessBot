@@ -20,7 +20,7 @@ class GameSetup:
                 EC.presence_of_element_located((By.ID,"guest-button")))
             button.click()
         except Exception:
-            raise RuntimeError("Не удалось начать игру как гость")
+            raise RuntimeError("Failed to start the game as a guest")
 
     def enable_show_legal_moves(self) -> None:
 

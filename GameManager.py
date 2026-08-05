@@ -12,12 +12,12 @@ class GameManager:
         time.sleep(1)
 
         my_color = self.controller.get_my_color()
-        color_str = "БЕЛЫЕ" if my_color == chess.WHITE else "ЧЕРНЫЕ"
+        color_str = "WHITE" if my_color == chess.WHITE else "BLACK"
 
-        print(f" Новая партия! Мой цвет: {color_str}")
+        print(f"New game! My color: {color_str}")
 
         game_record = self.repo.create_game(my_color=color_str)
-        print(f"Партия сохранена в БД с ID: {game_record.id}")
+        print(f"The game is saved in the database with ID:{game_record.id}")
 
         board = chess.Board()
 
@@ -29,17 +29,17 @@ class GameManager:
                     self._handle_enemy_turn(board, game_record.id)
 
         except Exception as e:
-            print(f"Игра была прервана: {e}")
+            print(f"The game was interrupted: {e}")
 
         finally:
             time.sleep(1)
             result_title = self.controller.get_game_result_reason()
-            print(f" Сохраняю результат в БД: '{result_title}'")
+            print(f" Save the result in the database: '{result_title}'")
             self.repo.finish_game(game_id=game_record.id, result=result_title)
 
     def _handle_our_turn(self, board: chess.Board, game_id: int):
         move = self.engine.get_best_move(board)
-        print(f"Выполняю ход: {move}")
+        print(f"Making a move: {move}")
         self.repo.add_move(
             game_id=game_id,
             move_number=board.fullmove_number,
